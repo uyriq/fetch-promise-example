@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-
+import React, { useState, useContext} from 'react';
+import { dataContext } from '../context/context-data';
 import { INGREDIENTS_URL, HEADERS } from './constants';
- const GetIngredients = async () => {
+
+export const GetIngredients = async ( setIsLoading, setError) => {
+let data
     try {
       const response = await fetch(INGREDIENTS_URL, { headers: HEADERS });
-      const data = await response.json();
-      setData(data);
+      return  data = await response.json();
     } catch (err) {
       const errorMessage = "Error: " + err.message;
       setError(errorMessage);
@@ -13,6 +14,7 @@ import { INGREDIENTS_URL, HEADERS } from './constants';
     } finally {
       setIsLoading(false);
     }
+    return data
   };
 
 export default GetIngredients;
