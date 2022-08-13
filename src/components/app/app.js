@@ -1,31 +1,31 @@
-/* require('react-dom');
-window.React2 = require('react');
-console.log(window.React1 === window.React2);
-*/
-
-import React, { useEffect, useState, useContext } from 'react';
-import { dataContext } from '../context/context-data';
-import GetIngredients from '../utils/api';
-import "./../../styles.css"
+import { useEffect, useState } from 'react';
+import '../../styles.css';
+// import GetIngredients from '../components/utils/api';
+import { INGREDIENTS_URL, HEADERS } from '../utils/constants';
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setError] = useState(null);
+  const [data, setData] = useState(null)
 
-  const [isLoading, setIsLoading] = useState(
-    true, function setIsLoading(value) {
-    return (value)
-  });
-  const [isError, setError] = useState(
-    null, function setError(error) {
-    return (error)
-  });
- const { data, setData } = useContext(dataContext)
+  const GetIngredients = async () => {
+     try {
+       const response = await fetch(INGREDIENTS_URL, { headers: HEADERS });
+       const data = await response.json();
+       setData(data);
+     } catch (err) {
+       const errorMessage = "Error: " + err.message;
+       setError(errorMessage);
+       console.log(errorMessage);
+     } finally {
+       setIsLoading(false);
+     }
+   };
 
 
   useEffect(() => {
-    let res= ( GetIngredients( setIsLoading, setError))
-    setData(res)
+    GetIngredients()
     return () => {
-
       setIsLoading(false)
     };
   }, []);
@@ -33,13 +33,12 @@ export default function App() {
   if (isLoading) return "Loading...";
   if (isError) return isError
 
-  return (!isLoading && !isError &&
+  return ( !isLoading && !isError && <>
     <div className="App">
-      <dataContext.Provider value={{ data, setData }}>
-        <h1>Hello CodeSandbox</h1>
-        <h2>Start editing to see some magic happen!</h2>
-        <pre>{JSON.stringify(data, null, 2)}</pre>
-      </dataContext.Provider>
+      <h1>Hello CodeSandbox</h1>
+      <h2>Start editing to see some magic happen!</h2>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
+    </>
   );
 }
