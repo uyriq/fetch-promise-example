@@ -1,12 +1,28 @@
 import { useEffect, useState } from 'react';
 import '.././styles.css';
-import GetIngredients from '../components/utils/api';
-
+// import GetIngredients from '../components/utils/api';
+import { INGREDIENTS_URL, HEADERS } from '../components/utils/constants';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setError] = useState(null);
   const [data, setData] = useState(null)
+
+
+  const GetIngredients = async () => {
+     try {
+       const response = await fetch(INGREDIENTS_URL, { headers: HEADERS });
+       const data = await response.json();
+       setData(data);
+     } catch (err) {
+       const errorMessage = "Error: " + err.message;
+       setError(errorMessage);
+       console.log(errorMessage);
+     } finally {
+       setIsLoading(false);
+     }
+   };
+
 
   useEffect(() => {
     GetIngredients()
