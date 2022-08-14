@@ -1,20 +1,15 @@
-import React, { useState, useContext} from 'react';
-import { dataContext } from '../context/context-data';
-import { INGREDIENTS_URL, HEADERS } from './constants';
+import { BURGER_API_URL, HEADERS } from './constants';
 
-export const GetIngredients = async ( setIsLoading, setError) => {
-let data
-    try {
-      const response = await fetch(INGREDIENTS_URL, { headers: HEADERS });
-      return  data = await response.json();
-    } catch (err) {
-      const errorMessage = "Error: " + err.message;
-      setError(errorMessage);
-      console.log(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-    return data
-  };
+const checkReponse = (res) => {
+  return res.ok ? res.json() : res.json().then((err) => Promise.reject(err));
+};
+  const getIngredients = async () => {
+  return await fetch(`${BURGER_API_URL}/ingredients`, {headers: HEADERS})
+    .then(checkReponse)
+    .then((data) => {
+      if (data?.success) return data.data;
+      return Promise.reject(data);
+    });
+};
 
-export default GetIngredients;
+  export default getIngredients;
